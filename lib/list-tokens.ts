@@ -1,3 +1,4 @@
+import { ITEMS_PER_PAGE } from "./constants"
 import type { Token, Filters, ListResult } from "./types"
 
 const MERKL_API_URL = "https://api.merkl.xyz/v4/tokens"
@@ -18,7 +19,7 @@ type MerklToken = {
 
 function toMerklUrl(filters: Filters) {
   const page = parseInteger(filters.page ?? null, 0)
-  const items = parseInteger(filters.items ?? null, 20, 1, 1000)
+  const items = parseInteger(filters.items ?? null, ITEMS_PER_PAGE, 1, 1000)
   const search = filters.search?.trim() ?? ""
   const chainId = filters.chainId?.trim() ?? ""
   const verified = filters.verified?.trim() ?? ""

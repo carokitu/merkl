@@ -9,7 +9,6 @@ export function paramsToFilters(
 ): Filters {
   return {
     page: first(params.page),
-    items: first(params.items),
     chainId: first(params.chainId),
     search: first(params.search),
     verified: first(params.verified),

@@ -4,6 +4,8 @@ import { listTokens } from "@/lib/list-tokens"
 import { paramsToFilters } from "@/lib/params-to-filters"
 import type { SearchParams } from "@/lib/types"
 import { ListStatus } from "./ListStatus"
+import { Pagination } from "./Pagination"
+import { ITEMS_PER_PAGE } from "@/lib/constants"
 
 type Props = {
   searchParams: Promise<SearchParams>
@@ -26,6 +28,10 @@ export async function Browser({ searchParams }: Props) {
     <>
       <Filters filters={filters} />
       <List tokens={tokenList.tokens} />
+      <Pagination
+        page={Number(filters.page ?? 0)}
+        hasNext={tokenList.tokens.length === ITEMS_PER_PAGE}
+      />
     </>
   )
 }
