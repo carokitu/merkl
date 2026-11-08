@@ -1,5 +1,13 @@
+:root {
+  --color-primary: #0f213e;
+  --color-background: #f3efe4;
+  --color-paper: #f3efe4;
+  --color-text: #0f213e;
+  --color-text-secondary: #5c6578;
+  --color-divider: rgba(15, 33, 62, 0.16);
+  --color-outline: rgba(15, 33, 62, 0.4);
+}
+
 body {
-  font-family: var(--font-geist-sans), sans-serif;
-  max-width: 40rem;
-  margin: 1rem auto;
+  margin: 0;
 }

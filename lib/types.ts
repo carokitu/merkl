@@ -1,11 +1,15 @@
 export type Token = {
   id: string
+  address: string
   name: string | null
   chainId: number
+  chainName: string | null
   symbol: string
   displaySymbol?: string
+  icon: string | null
   verified: boolean
   price: number | null
+  updatedAt: number | null
 }
 
 export type ListResult =

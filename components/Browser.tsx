@@ -1,4 +1,3 @@
-import { FetchedAt } from "@/components/FetchedAt"
 import { Filters } from "@/components/Filters"
 import { List } from "@/components/List"
 import { listTokens } from "@/lib/list-tokens"
@@ -26,7 +25,6 @@ export async function Browser({ searchParams }: Props) {
   return (
     <>
       <Filters filters={filters} />
-      <FetchedAt fetchedAt={tokenList.fetchedAt} />
       <List tokens={tokenList.tokens} />
     </>
   )
