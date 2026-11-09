@@ -1,9 +1,10 @@
 import { ITEMS_PER_PAGE } from "./constants"
-import { chainNames, MERKL_API_URL, toToken, type MerklToken } from "./merkl"
-import { problem, problemFrom } from "./problem"
+import { fetchTokens } from "./merkl-api"
+import { chainNames, toToken } from "./merkl-utils"
+import { problem } from "./problem"
 import type { Filters, ListResult } from "./types"
 
-function toMerklUrl(filters: Filters) {
+function toMerklParams(filters: Filters) {
   const page = parseInteger(filters.page ?? null, 0)
   const items = parseInteger(filters.items ?? null, ITEMS_PER_PAGE, 1, 1000)
   const search = filters.search?.trim() ?? ""
@@ -18,15 +19,15 @@ function toMerklUrl(filters: Filters) {
     return null
   }
 
-  const url = new URL(MERKL_API_URL)
+  const params = new URLSearchParams()
 
-  url.searchParams.set("page", String(page))
-  url.searchParams.set("items", String(items))
-  if (verified === "true") url.searchParams.set("verified", "true")
-  if (chainId) url.searchParams.set("chainId", chainId)
-  if (search) url.searchParams.set("search", search)
+  params.set("page", String(page))
+  params.set("items", String(items))
+  if (verified === "true") params.set("verified", "true")
+  if (chainId) params.set("chainId", chainId)
+  if (search) params.set("search", search)
 
-  return url
+  return params
 }
 
 function parseInteger(
@@ -46,23 +47,17 @@ function parseInteger(
 }
 
 export async function listTokens(filters: Filters): Promise<ListResult> {
-  const url = toMerklUrl(filters)
+  const params = toMerklParams(filters)
 
-  if (!url) return problem(400, "Un ou plusieurs filtres ne sont pas valides.")
+  if (!params) return problem(400, "Un ou plusieurs filtres ne sont pas valides.")
 
   try {
-    const [response, names] = await Promise.all([fetch(url), chainNames()])
-    const fetchedAt = new Date().toISOString()
-
-    if (!response.ok) return problemFrom(response)
-
-    const body = (await response.json()) as MerklToken[]
+    const [body, names] = await Promise.all([fetchTokens(params), chainNames()])
 
     if (!Array.isArray(body)) return problem(400, "Un ou plusieurs filtres ne sont pas valides.")
 
     return {
       status: "ok",
-      fetchedAt,
       tokens: body.map((token) => toToken(token, names)),
     }
   } catch {

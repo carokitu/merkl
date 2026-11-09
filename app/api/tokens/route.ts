@@ -21,6 +21,5 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     tokens: result.tokens,
-    fetchedAt: result.fetchedAt,
   })
 }

@@ -1,8 +1,5 @@
+import { fetchChains } from "./merkl-api"
 import type { Token } from "./types"
-
-export const MERKL_API_URL = "https://api.merkl.xyz/v4/tokens"
-
-const MERKL_CHAINS_URL = "https://api.merkl.xyz/v4/chains"
 
 export type MerklToken = {
   id: string
@@ -19,20 +16,23 @@ export type MerklToken = {
 }
 
 export async function chainNames() {
+  const body = await fetchChains()
+
+  if (!Array.isArray(body)) {
+    throw new Error("Invalid Merkl chains response")
+  }
+
   const names = new Map<number, string>()
 
-  try {
-    const response = await fetch(MERKL_CHAINS_URL)
-    if (!response.ok) return names
-
-    const body = (await response.json()) as { id?: number; name?: string }[]
-    if (!Array.isArray(body)) return names
-
-    for (const chain of body) {
-      if (typeof chain.id === "number" && chain.name) names.set(chain.id, chain.name)
+  for (const chain of body) {
+    if (
+      typeof chain.id === "number" &&
+      Number.isInteger(chain.id) &&
+      typeof chain.name === "string" &&
+      chain.name.trim()
+    ) {
+      names.set(chain.id, chain.name.trim())
     }
-  } catch {
-    return names
   }
 
   return names

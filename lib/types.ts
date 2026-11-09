@@ -18,16 +18,14 @@ export type Problem = {
   title: string
   status: number
   detail: string
-  instance?: string
-  errors?: unknown
 }
 
 export type ListResult =
-  | { status: "ok"; tokens: Token[]; fetchedAt: string }
+  | { status: "ok"; tokens: Token[] }
   | Problem
 
 export type TokenResult =
-  | { status: "ok"; token: Token; fetchedAt: string }
+  | { status: "ok"; token: Token }
   | Problem
 
 export type SearchParams = Record<string, string | string[] | undefined>

@@ -18,6 +18,5 @@ export async function GET(_request: Request, context: RouteContext) {
 
   return NextResponse.json({
     token: result.token,
-    fetchedAt: result.fetchedAt,
   })
 }
