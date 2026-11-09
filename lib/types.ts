@@ -8,14 +8,27 @@ export type Token = {
   displaySymbol?: string
   icon: string | null
   verified: boolean
+  isNative: boolean
   price: number | null
   updatedAt: number | null
 }
 
+export type Problem = {
+  type: string
+  title: string
+  status: number
+  detail: string
+  instance?: string
+  errors?: unknown
+}
+
 export type ListResult =
   | { status: "ok"; tokens: Token[]; fetchedAt: string }
-  | { status: "invalid" }
-  | { status: "unavailable" }
+  | Problem
+
+export type TokenResult =
+  | { status: "ok"; token: Token; fetchedAt: string }
+  | Problem
 
 export type SearchParams = Record<string, string | string[] | undefined>
 

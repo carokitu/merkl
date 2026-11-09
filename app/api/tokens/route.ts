@@ -12,12 +12,11 @@ export async function GET(request: NextRequest) {
     verified: searchParams.get("verified") ?? undefined,
   })
 
-  if (result.status === "invalid") {
-    return NextResponse.json({ error: "Un ou plusieurs filtres ne sont pas valides." }, { status: 400 })
-  }
-
-  if (result.status === "unavailable") {
-    return NextResponse.json({ error: "Merkl ne répond pas." }, { status: 502 })
+  if (result.status !== "ok") {
+    return NextResponse.json(result, {
+      status: result.status,
+      headers: { "content-type": "application/problem+json" },
+    })
   }
 
   return NextResponse.json({

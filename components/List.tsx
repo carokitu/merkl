@@ -1,9 +1,11 @@
+import Link from "next/link"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import Chip from "@mui/material/Chip"
 import Stack from "@mui/material/Stack"
 import Typography from "@mui/material/Typography"
 import { BadgeCheck } from "lucide-react"
+import { TokenIcon } from "@/components/TokenIcon"
 import type { Token } from "@/lib/types"
 
 const nameSize = "clamp(1.4rem, 2.5vw, 1.9rem)"
@@ -85,63 +87,48 @@ export function List({ tokens }: { tokens: Token[] }) {
         const showSymbol = Boolean(token.name?.trim()) && symbol !== label
 
         return (
-          <Stack component="li" key={token.id} sx={cardSx}>
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", flex: "1 1 16rem", minWidth: 0 }}>
-                {token.icon ? (
-                  <Box component="img" src={token.icon} alt="" sx={{ width: 52, height: 52, objectFit: "contain" }} />
-                ) : (
-                  <Box
-                    sx={{
-                      width: 52,
-                      height: 52,
-                      display: "grid",
-                      placeItems: "center",
-                      borderRadius: "50%",
-                      border: "2px solid var(--color-text)",
-                      bgcolor: "var(--color-paper)",
-                      color: "var(--color-text)",
-                      fontSize: "1.15rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                  {label.slice(0, 1).toUpperCase()}
-              </Box>
-                )}
+          <Box component="li" key={token.id}>
+            <Link href={`/tokens/${token.id}`} style={{ display: "block", color: "inherit", textDecoration: "none" }}>
+              <Stack sx={cardSx}>
+                <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", flex: "1 1 16rem", minWidth: 0 }}>
+                    <TokenIcon src={token.icon} label={label} size={52} />
 
-              <Stack spacing={0.25} sx={{ minWidth: 0, flex: 1 }}>
-                <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", minWidth: 0 }}>
-                  <Typography noWrap sx={{ minWidth: 0, fontSize: nameSize, fontWeight: 600, letterSpacing: "-0.045em", lineHeight: 1.05 }}>
-                    {label}
-                  </Typography>
-                  {token.verified ? (
-                    <Box
-                      sx={{
-                        display: "inline-flex",
-                        flexShrink: 0,
-                        color: "var(--color-text)",
-                        "& svg": { width: nameSize, height: nameSize },
-                      }}
-                    >
-                      <BadgeCheck aria-label="Vérifié" strokeWidth={2.4} />
-                    </Box>
-                  ) : null}
+                  <Stack spacing={0.25} sx={{ minWidth: 0, flex: 1 }}>
+                    <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", minWidth: 0 }}>
+                      <Typography noWrap sx={{ minWidth: 0, fontSize: nameSize, fontWeight: 600, letterSpacing: "-0.045em", lineHeight: 1.05 }}>
+                        {label}
+                      </Typography>
+                      {token.verified ? (
+                        <Box
+                          sx={{
+                            display: "inline-flex",
+                            flexShrink: 0,
+                            color: "var(--color-text)",
+                            "& svg": { width: nameSize, height: nameSize },
+                          }}
+                        >
+                          <BadgeCheck aria-label="Vérifié" strokeWidth={2.4} />
+                        </Box>
+                      ) : null}
+                    </Stack>
+                    {showSymbol ? (
+                      <Typography noWrap color="text.secondary" sx={{ fontSize: "0.78rem", fontWeight: 650, letterSpacing: "0.16em", textTransform: "uppercase" }}>
+                        {symbol}
+                      </Typography>
+                    ) : null}
+                  </Stack>
                 </Stack>
-                {showSymbol ? (
-                  <Typography noWrap color="text.secondary" sx={{ fontSize: "0.78rem", fontWeight: 650, letterSpacing: "0.16em", textTransform: "uppercase" }}>
-                    {symbol}
-                  </Typography>
-                ) : null}
+
+                <Typography sx={{ fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+                  {token.price != null ? formatUsd(token.price) : "—"}
+                </Typography>
+
+                <Stack direction="row" spacing={0.75} useFlexGap sx={{ justifyContent: "flex-end" }}>
+                  <Chip label={token.chainName ?? "Inconnue"} size="small" sx={badgeSx} />
+                </Stack>
               </Stack>
-            </Stack>
-
-            <Typography sx={{ fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
-              {token.price != null ? formatUsd(token.price) : "—"}
-            </Typography>
-
-            <Stack direction="row" spacing={0.75} useFlexGap sx={{ justifyContent: "flex-end" }}>
-              <Chip label={token.chainName ?? "Inconnue"} size="small" sx={badgeSx} />
-            </Stack>
-          </Stack>
+            </Link>
+          </Box>
         )
       })}
     </Stack>

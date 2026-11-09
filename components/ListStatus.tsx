@@ -1,15 +1,14 @@
 import Typography from "@mui/material/Typography"
 
 type Props = {
-  status: "ok" | "invalid" | "unavailable"
+  status: number
+  detail: string
 }
 
-export function ListStatus({ status }: Props) {
-  if (status === "invalid") {
-    return <Typography color="error">Un ou plusieurs filtres ne sont pas valides.</Typography>
+export function ListStatus({ status, detail }: Props) {
+  if (status < 500) {
+    return <Typography color="error">{detail}</Typography>
   }
 
-  if (status === "unavailable") {
-    return <Typography color="warning">Merkl ne répond pas. La liste ne peut pas s&apos;afficher.</Typography>
-  }
+  return <Typography color="warning">Merkl ne répond pas. La liste ne peut pas s&apos;afficher.</Typography>
 }

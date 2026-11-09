@@ -1,21 +1,7 @@
 import { ITEMS_PER_PAGE } from "./constants"
-import type { Token, Filters, ListResult } from "./types"
-
-const MERKL_API_URL = "https://api.merkl.xyz/v4/tokens"
-const MERKL_CHAINS_URL = "https://api.merkl.xyz/v4/chains"
-
-type MerklToken = {
-  id: string
-  address: string
-  name?: string | null
-  chainId: number
-  symbol: string
-  displaySymbol?: string
-  icon?: string
-  verified: boolean
-  price?: number | null
-  updatedAt?: number | null
-}
+import { chainNames, MERKL_API_URL, toToken, type MerklToken } from "./merkl"
+import { problem, problemFrom } from "./problem"
+import type { Filters, ListResult } from "./types"
 
 function toMerklUrl(filters: Filters) {
   const page = parseInteger(filters.page ?? null, 0)
@@ -59,58 +45,20 @@ function parseInteger(
   return parsed
 }
 
-async function chainNames() {
-  const names = new Map<number, string>()
-
-  try {
-    const response = await fetch(MERKL_CHAINS_URL)
-    if (!response.ok) return names
-
-    const body = (await response.json()) as { id?: number; name?: string }[]
-    if (!Array.isArray(body)) return names
-
-    for (const chain of body) {
-      if (typeof chain.id === "number" && chain.name) names.set(chain.id, chain.name)
-    }
-  } catch {
-    return names
-  }
-
-  return names
-}
-
-function toToken(token: MerklToken, names: Map<number, string>): Token {
-  return {
-    id: token.id,
-    address: token.address,
-    name: token.name ?? null,
-    chainId: token.chainId,
-    chainName: names.get(token.chainId) ?? null,
-    symbol: token.symbol,
-    displaySymbol: token.displaySymbol,
-    icon: token.icon || null,
-    verified: token.verified,
-    price: token.price ?? null,
-    updatedAt: token.updatedAt ?? null,
-  }
-}
-
 export async function listTokens(filters: Filters): Promise<ListResult> {
   const url = toMerklUrl(filters)
 
-  if (!url) return { status: "invalid" }
+  if (!url) return problem(400, "Un ou plusieurs filtres ne sont pas valides.")
 
-  
   try {
     const [response, names] = await Promise.all([fetch(url), chainNames()])
     const fetchedAt = new Date().toISOString()
 
-    if (response.status >= 400 && response.status < 500) return { status: "invalid" }
-    if (!response.ok) return { status: "unavailable" }
+    if (!response.ok) return problemFrom(response)
 
     const body = (await response.json()) as MerklToken[]
 
-    if (!Array.isArray(body)) return { status: "invalid" }
+    if (!Array.isArray(body)) return problem(400, "Un ou plusieurs filtres ne sont pas valides.")
 
     return {
       status: "ok",
@@ -118,6 +66,6 @@ export async function listTokens(filters: Filters): Promise<ListResult> {
       tokens: body.map((token) => toToken(token, names)),
     }
   } catch {
-    return { status: "unavailable" }
+    return problem(502, "Merkl ne répond pas.")
   }
 }

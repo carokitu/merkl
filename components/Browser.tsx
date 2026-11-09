@@ -19,7 +19,7 @@ export async function Browser({ searchParams }: Props) {
     return (
       <>
         <Filters filters={filters} />
-        <ListStatus status={tokenList.status} />
+        <ListStatus status={tokenList.status} detail={tokenList.detail} />
       </>
     )
   }
