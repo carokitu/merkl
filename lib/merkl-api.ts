@@ -9,11 +9,6 @@ async function merklFetch<T>(url: string): Promise<T> {
   cacheLife("minutes")
 
   const response = await fetch(url)
-
-  if (!response.ok) {
-    throw new Error("Merkl API unavailable")
-  }
-
   return response.json() as Promise<T>
 }
 
