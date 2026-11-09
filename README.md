@@ -1,6 +1,6 @@
 # Merkl tokens
 
-A small Next.js app that lists [Merkl](https://api.merkl.xyz) tokens and opens one token on its own page. The browser talks to this app. This app talks to Merkl.
+A small Next.js app that lists [Merkl](https://api.merkl.xyz/docs) tokens and opens one token on its own page. The browser talks to this app. This app talks to Merkl.
 
 ```bash
 npm install
