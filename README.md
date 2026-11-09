@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Merkl tokens
 
-## Getting Started
-
-First, run the development server:
+A small Next.js app that lists [Merkl](https://api.merkl.xyz) tokens and opens one token on its own page. The browser talks to this app. This app talks to Merkl.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` is the list. Filters live in the URL: `search`, `chainId`, and `verified=true`. `page` is optional and starts at 0.
+- `/tokens/[id]` is one token. The id is Merkl's own id, not the symbol.
 
-## Learn More
+The chain filter takes a chain id (`1` for Ethereum), not a name.
 
-To learn more about Next.js, take a look at the following resources:
+## API
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Method | Path | |
+|---|---|---|
+| `GET` | `/api/tokens` | The list. Same query params as the page. |
+| `GET` | `/api/tokens/[id]` | One token. |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+A bad filter is `400`. If Merkl does not answer, the response is `502`.
 
-## Deploy on Vercel
+The pages and the routes call the same functions. The page does not fetch its own HTTP route.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Cache
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`lib/merkl-api.ts` is the only door to Merkl. The list, the token, and the chain names go through `merklFetch`, which is cached with `"use cache"` and `cacheLife("minutes")`. The cache key is the full URL, so a different filter is a different entry. A failed call is not kept.
